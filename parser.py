@@ -7,14 +7,13 @@ import mechanize
 if len(sys.argv) > 1:
     br = mechanize.Browser()
     url = sys.argv[1]
-    page = 0
+    page = 1
 
-    while page < 40:
-        url_with_page = url
-        if page:
-            url_with_page += '?page=' + str(page)
-
-        html_str = br.open(url_with_page).read()
+    while page <= 40:
+        if page > 1:
+            html_str = br.follow_link(text=str(page)).read()
+        else:
+            html_str = br.open(url).read()
 
         parser = AdvancedHTMLParser.AdvancedHTMLParser()
         parser.parseStr(html_str.decode('UTF-8'))
@@ -36,7 +35,7 @@ if len(sys.argv) > 1:
                     print('Город:', tag.innerHTML)
                     print(tag.innerText)
 
-            print('------------------', url_with_page)
+            print('------------------ page', page)
         page += 1
 else:
     exit('Не указан обязательный параметр - URL')
