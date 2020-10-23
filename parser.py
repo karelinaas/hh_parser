@@ -67,6 +67,8 @@ if len(sys.argv) > 1:
 
             print('---------------- спарсили страницу', page, '(макс. 40)')
             page += 1
+    except Exception:
+        pass
     finally:
         print('Удалось обработать', page - 1, 'страниц, сохраняем csv...')
 
