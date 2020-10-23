@@ -35,6 +35,8 @@ if len(sys.argv) > 1:
             vacancies = parser.getElementsByClassName('vacancy-serp-item')
 
             for i, vac_tag in enumerate(vacancies):
+                data_found = False
+
                 # получаем все дочерние тэги карточки
                 sub_tags = vac_tag.getAllChildNodes()
 
@@ -48,6 +50,7 @@ if len(sys.argv) > 1:
                 for tag in sub_tags:
                     # когда всё уже нашли, хватит перебирать
                     if vacancy_info['link'] and vacancy_info['name'] and vacancy_info['salary'] and vacancy_info['city']:
+                        data_found = True
                         to_csv.append(vacancy_info)
                         break
 
@@ -64,6 +67,9 @@ if len(sys.argv) > 1:
                     elif classes == 'vacancy-serp-item__meta-info' and 'vacancy-serp__vacancy-address' in tag.innerHTML:
                         # город (тут приходится резать тэги)
                         vacancy_info['city'] = re.sub('<[^<]+?>', '', tag.innerHTML)
+
+                if not data_found:
+                    to_csv.append(vacancy_info)
 
             print('---------------- спарсили страницу', page, '(макс. 40)')
             page += 1
