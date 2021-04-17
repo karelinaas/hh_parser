@@ -20,7 +20,7 @@ if len(sys.argv) > 1:
     # на всякий случай оборачиваю в try, т.к. ошибок может быть много разных
     # так хоть что-то попадёт в csv
     try:
-        while page <= 40:  # hh даёт посмотреть максимум 40 страниц, сколько бы не было вакансий
+        while page <= 3:  # hh даёт посмотреть максимум 40 страниц, сколько бы не было вакансий
             if page > 1:
                 # проход по пагинации (тык по ссылке на след. страницу)
                 html_str = br.follow_link(text=str(page)).read()
@@ -55,15 +55,17 @@ if len(sys.argv) > 1:
                         break
 
                     classes = str(tag.classNames).strip()
+                    attr_dict = tag.attributesDict
 
                     # по аттрибуту class (и др.) находим:
-                    if classes == 'bloko-link HH-LinkModifier':
+                    if classes == 'bloko-link' and attr_dict and 'data-qa' in attr_dict and \
+                            str(attr_dict['data-qa']).strip() == 'vacancy-serp__vacancy-title':
                         # ссылка и название вакансии
                         vacancy_info['link'] = tag.href
                         vacancy_info['name'] = tag.innerText
                     elif classes == 'bloko-section-header-3 bloko-section-header-3_lite' and tag.innerText:
                         # зарплата
-                        vacancy_info['salary'] = tag.innerText
+                        vacancy_info['salary'] = re.sub('<[^<]+?>', '', tag.innerHTML)
                     elif classes == 'vacancy-serp-item__meta-info' and 'vacancy-serp__vacancy-address' in tag.innerHTML:
                         # город (тут приходится резать тэги)
                         vacancy_info['city'] = re.sub('<[^<]+?>', '', tag.innerHTML)

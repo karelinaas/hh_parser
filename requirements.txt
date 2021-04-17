@@ -1,2 +1,3 @@
+requests
 mechanize==0.4.5
 AdvancedHTMLParser==9.0.1
